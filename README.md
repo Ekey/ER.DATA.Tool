@@ -4,7 +4,7 @@ Tool for extract DATA archives from mobile game [Earth Revival (Project Arrival)
 ## Usage
 > ER.Unpacker "**INPUT_IDX_FILE**" "**OUTPUT_DIRECTORY (OPTIONAL)**"
 
-### Example
+### Examples
 > ER.Unpacker "**E:\Games\EarthRevival\Game\Game_Data\StreamingAssets\datas\data.32.idx**"
 
 > ER.Unpacker "**E:\Games\EarthRevival\Game\Game_Data\StreamingAssets\datas\data.32.idx**" "**D:\Unpacked**"
