@@ -15,7 +15,7 @@ namespace ER.Unpacker
             Console.WriteLine("(c) 2025 Ekey (h4x0r) / v{0}\n", Utils.iGetApplicationVersion());
             Console.ResetColor();
 
-            if (args.Length != 2)
+            if (args.Length != 1 && args.Length != 2)
             {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("[Usage]");
@@ -36,11 +36,11 @@ namespace ER.Unpacker
 
             if (args.Length == 2)
             {
-                m_Output = Path.GetDirectoryName(args[1]) + @"\" + Path.GetFileNameWithoutExtension(args[1]) + @"\";
+                m_Output = Utils.iCheckArgumentsPath(args[1]);
             }
             else
             {
-                m_Output = Utils.iCheckArgumentsPath(args[2]);
+                m_Output = Path.GetDirectoryName(args[0]) + @"\" + Path.GetFileNameWithoutExtension(args[0]) + @"\";
             }
 
             if (!File.Exists("libjnte.dll") || !File.Exists("UnityPlayer.dll"))
