@@ -45,7 +45,7 @@ namespace ER.Unpacker
                 {
                     var m_Entry = new IdxEntry();
 
-                    m_Entry.m_Hash = IdxUtils.iGetStringFromBytes(TIndexStream.ReadBytes(16));
+                    m_Entry.m_Hash = Utils.iGetStringFromBytes(TIndexStream.ReadBytes(16));
                     m_Entry.dwOffset = TIndexStream.ReadUInt32(true);
                     m_Entry.dwCompressedSize = TIndexStream.ReadInt32(true);
                     m_Entry.dwDecompressedSize = TIndexStream.ReadInt32(true);
@@ -65,7 +65,7 @@ namespace ER.Unpacker
                     for (Int32 i = 0; i < m_Header.dwTotalContents; i++)
                     {
                         UInt64 dwHashName = TIndexStream.ReadUInt64(true);
-                        String m_Hash = IdxUtils.iGetStringFromBytes(TIndexStream.ReadBytes(16));
+                        String m_Hash = Utils.iGetStringFromBytes(TIndexStream.ReadBytes(16));
 
                         var m_Entry = iGetEntryRecordByHash(m_Hash);
 
@@ -79,6 +79,7 @@ namespace ER.Unpacker
 
                             TDataStream.Seek(m_Entry.dwOffset, SeekOrigin.Begin);
                             var lpBuffer = TDataStream.ReadBytes(m_Entry.dwCompressedSize);
+
                             lpBuffer = JNTE.iDecompress(lpBuffer);
 
                             File.WriteAllBytes(m_FullPath, lpBuffer);

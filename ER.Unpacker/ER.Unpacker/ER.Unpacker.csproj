@@ -48,7 +48,6 @@
     <Compile Include="FileSystem\Package\IdxEntry.cs" />
     <Compile Include="FileSystem\Package\IdxFlags.cs" />
     <Compile Include="FileSystem\Package\IdxHeader.cs" />
-    <Compile Include="FileSystem\Package\IdxUtils.cs" />
     <Compile Include="FileSystem\Package\IdxFileInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
