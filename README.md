@@ -1,5 +1,5 @@
 # ER.Unpacker :see_no_evil:
-Tool for extract DATA archives from mobile game [Earth Revival (Project Arrival)](https://sf.nvsgames.com)
+Tool for extract DATA archives from mobile game [Earth Revival (Project Arrival)](https://sf.nvsgames.com), [Steam Page](https://store.steampowered.com/app/2057470/Earth_Revival)
 
 ## Usage
 > ER.Unpacker "**INPUT_IDX_FILE**" "**OUTPUT_DIRECTORY (OPTIONAL)**"
