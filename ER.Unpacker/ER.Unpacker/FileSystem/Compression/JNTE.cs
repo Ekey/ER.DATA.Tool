@@ -30,14 +30,15 @@ namespace ER.Unpacker
                 if (m_BlockTable[i].bCompressionType == CompressionType.None)
                 {
                     Array.Copy(lpCompressedBlock, 0, lpResult, dwOffset, m_BlockTable[i].dwCompressedSize);
+                    dwOffset += m_BlockTable[i].dwCompressedSize;
                 }
                 else
                 {
                     iJnteDecompress(lpCompressedBlock, m_BlockTable[i].dwCompressedSize, lpDecompressedBlock, m_BlockTable[i].dwDecompressedSize, (Int32)m_BlockTable[i].bCompressionType);
                     Array.Copy(lpDecompressedBlock, 0, lpResult, dwOffset, m_BlockTable[i].dwDecompressedSize);
-                }
 
-                dwOffset += m_BlockTable[i].dwDecompressedSize;
+                    dwOffset += m_BlockTable[i].dwDecompressedSize;
+                }
             }
 
             return lpResult;
