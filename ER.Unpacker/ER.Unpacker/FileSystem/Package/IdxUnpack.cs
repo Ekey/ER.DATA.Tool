@@ -45,12 +45,12 @@ namespace ER.Unpacker
                 {
                     var m_Entry = new IdxEntry();
 
-                    String m_Hash = IdxUtils.iGetStringFromBytes(TIndexStream.ReadBytes(16));
+                    m_Entry.m_Hash = IdxUtils.iGetStringFromBytes(TIndexStream.ReadBytes(16));
                     m_Entry.dwOffset = TIndexStream.ReadUInt32(true);
                     m_Entry.dwCompressedSize = TIndexStream.ReadInt32(true);
                     m_Entry.dwDecompressedSize = TIndexStream.ReadInt32(true);
 
-                    m_EntryTable.Add(m_Hash, m_Entry);
+                    m_EntryTable.Add(m_Entry.m_Hash, m_Entry);
                 }
 
                 String m_DataFile = Path.GetDirectoryName(m_IndexFile) + @"\" + Path.GetFileNameWithoutExtension(m_IndexFile) + ".data";
