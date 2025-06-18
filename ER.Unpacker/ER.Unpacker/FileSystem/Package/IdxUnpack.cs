@@ -22,10 +22,32 @@ namespace ER.Unpacker
             return m_Entry;
         }
 
+        private static String iDetectResourceType(Byte[] lpBuffer, String m_FilePath)
+        {
+            if (lpBuffer.Length > 4)
+            {
+                UInt32 dwMagic = BitConverter.ToUInt32(lpBuffer, 0);
+
+                switch (dwMagic)
+                {
+                    case 0x24A4C1B: m_FilePath += ".lua"; break;
+                    case 0x46464952: m_FilePath += ".wem"; break;
+                    case 0x44484B42: m_FilePath += ".bnk"; break;
+                    case 0xFD4159FA: m_FilePath += ".tpkg"; break;
+                    case 0x44495243: m_FilePath += ".usm"; break;
+                }
+
+                return m_FilePath;
+            }
+
+            return m_FilePath;
+        }
+
         public static void iDoIt(String m_IndexFile, String m_DstFolder)
         {
             //String m_FileInfo = m_IndexFile.Replace(".idx", ".files_info");
-            
+
+            //String m_FileInfo = "data.files_info";
             //if (File.Exists(m_FileInfo))
             //{
             //    IdxFileInfo.iLoadList(m_FileInfo);
@@ -81,6 +103,11 @@ namespace ER.Unpacker
                             var lpBuffer = TDataStream.ReadBytes(m_Entry.dwCompressedSize);
 
                             lpBuffer = JNTE.iDecompress(lpBuffer);
+
+                            if (m_FileName.Contains("__Unknown"))
+                            {
+                                m_FullPath = iDetectResourceType(lpBuffer, m_FullPath);
+                            }
 
                             File.WriteAllBytes(m_FullPath, lpBuffer);
                         }
