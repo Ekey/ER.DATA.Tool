@@ -43,9 +43,16 @@ namespace ER.Unpacker
                 m_Output = Path.GetDirectoryName(args[0]) + @"\" + Path.GetFileNameWithoutExtension(args[0]) + @"\";
             }
 
-            if (!File.Exists("libjnte.dll") || !File.Exists("UnityPlayer.dll"))
+            if (!File.Exists("UnityPlayer.dll"))
             {
-                throw new Exception("[ERROR]: Unable to find libjnte.dll & UnityPlayer.dll modules!");
+                throw new Exception("[ERROR]: Unable to find UnityPlayer.dll library!");
+            }
+            else
+            {
+                if (!JNTE.iLoadUnityLibrary())
+                {
+                    throw new Exception("[ERROR]: Unable to load UnityPlayer.dll library!");
+                }
             }
 
             if (!File.Exists(m_IdxFile))

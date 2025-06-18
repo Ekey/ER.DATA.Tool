@@ -1,17 +1,39 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Security.Policy;
 using System.Runtime.InteropServices;
 
 namespace ER.Unpacker
 {
     class JNTE
     {
-        [DllImport("libjnte.dll", EntryPoint = "iJnteDecompress", CallingConvention = CallingConvention.StdCall)]
-        public static extern Int32 iJnteDecompress(Byte[] lpSrcBuffer, Int32 dwCompressedSize, Byte[] lpDstBuffer, Int32 dwDecompressedSize, Int32 dwCompressionType);
+        //Thanks to cdj88888 - https://github.com/cdj88888/Studio/
 
-        private static List<JNTEBlock> m_BlockTable = new List<JNTEBlock>();
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr LoadLibrary(String m_Library);
+
+        private static List<JNTEBlock> m_BlocksTable = new List<JNTEBlock>();
+
+        private delegate Int64 JNTE_LZ4Decompress(Byte[] lpSrcBuffer, Byte[] lpDstBuffer, Int32 dwCompressedSize, Int32 dwDecompressedSize);
+        private delegate Int64 JNTE_ZSTDDecompress(Byte[] lpDstBuffer, Int32 dwDecompressedSize, Byte[] lpSrcBuffer, Int32 dwCompressedSize);
+
+        private static JNTE_LZ4Decompress _LZ4Decompress;
+        private static JNTE_ZSTDDecompress _ZSTDDecompress;
+
+        public static Boolean iLoadUnityLibrary()
+        {
+            var m_Module = LoadLibrary("UnityPlayer.dll");
+
+            if (m_Module != null)
+            {
+                _LZ4Decompress = Marshal.GetDelegateForFunctionPointer<JNTE_LZ4Decompress>((IntPtr)(m_Module + 0x108D160));
+                _ZSTDDecompress = Marshal.GetDelegateForFunctionPointer<JNTE_ZSTDDecompress>((IntPtr)(m_Module + 0x10972F0));
+
+                return true;
+            }
+
+            return false;
+        }
 
         private static Byte[] iDecompressBlocks(Stream TStream)
         {
@@ -19,25 +41,29 @@ namespace ER.Unpacker
             Int32 dwTotalSize = 0;
             Byte[] lpResult = new Byte[] { };
 
-            for (Int32 i = 0; i < m_BlockTable.Count; i++)
+            for (Int32 i = 0; i < m_BlocksTable.Count; i++)
             {
-                Byte[] lpDecompressedBlock = new Byte[m_BlockTable[i].dwDecompressedSize];
-                Byte[] lpCompressedBlock = TStream.ReadBytes(m_BlockTable[i].dwCompressedSize);
+                Byte[] lpDecompressedBlock = new Byte[m_BlocksTable[i].dwDecompressedSize];
+                Byte[] lpCompressedBlock = TStream.ReadBytes(m_BlocksTable[i].dwCompressedSize);
 
-                dwTotalSize += m_BlockTable[i].dwDecompressedSize;
+                dwTotalSize += m_BlocksTable[i].dwDecompressedSize;
                 Array.Resize(ref lpResult, dwTotalSize);
 
-                if (m_BlockTable[i].bCompressionType == CompressionType.None)
+                if (m_BlocksTable[i].bCompressionType == CompressionType.None)
                 {
-                    Array.Copy(lpCompressedBlock, 0, lpResult, dwOffset, m_BlockTable[i].dwCompressedSize);
-                    dwOffset += m_BlockTable[i].dwCompressedSize;
+                    Array.Copy(lpCompressedBlock, 0, lpResult, dwOffset, m_BlocksTable[i].dwCompressedSize);
+                    dwOffset += m_BlocksTable[i].dwCompressedSize;
                 }
                 else
                 {
-                    iJnteDecompress(lpCompressedBlock, m_BlockTable[i].dwCompressedSize, lpDecompressedBlock, m_BlockTable[i].dwDecompressedSize, (Int32)m_BlockTable[i].bCompressionType);
-                    Array.Copy(lpDecompressedBlock, 0, lpResult, dwOffset, m_BlockTable[i].dwDecompressedSize);
+                    switch(m_BlocksTable[i].bCompressionType)
+                    {
+                        case CompressionType.LZ4: _LZ4Decompress(lpCompressedBlock, lpDecompressedBlock, m_BlocksTable[i].dwCompressedSize, m_BlocksTable[i].dwDecompressedSize); break;
+                        case CompressionType.ZSTD: _ZSTDDecompress(lpDecompressedBlock, m_BlocksTable[i].dwDecompressedSize, lpCompressedBlock, m_BlocksTable[i].dwCompressedSize); break;
+                    }
 
-                    dwOffset += m_BlockTable[i].dwDecompressedSize;
+                    Array.Copy(lpDecompressedBlock, 0, lpResult, dwOffset, m_BlocksTable[i].dwDecompressedSize);
+                    dwOffset += m_BlocksTable[i].dwDecompressedSize;
                 }
             }
 
@@ -46,7 +72,7 @@ namespace ER.Unpacker
 
         public static Byte[] iDecompress(Byte[] lpBuffer, Int32 dwOffset = 0)
         {
-            m_BlockTable.Clear();
+            m_BlocksTable.Clear();
 
             using (MemoryStream TMemoryStream = new MemoryStream(lpBuffer) { Position = dwOffset })
             {
@@ -66,7 +92,7 @@ namespace ER.Unpacker
                         m_Block.dwDecompressedSize = TMemoryStream.ReadInt32(true);
                         m_Block.dwCompressedSize = TMemoryStream.ReadInt32(true);
 
-                        m_BlockTable.Add(m_Block);
+                        m_BlocksTable.Add(m_Block);
                     }
 
                     lpBuffer = iDecompressBlocks(TMemoryStream);
