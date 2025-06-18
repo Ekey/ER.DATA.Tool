@@ -11,3 +11,7 @@ Tool for extract DATA archives from mobile game [Earth Revival (Project Arrival)
 
 > [!note]
 > If the output directory is not specified, then the unpacked files will be in the same place as the IDX file
+
+# Thanks
+
+* [cdj88888](https://github.com/cdj88888)
