@@ -13,15 +13,19 @@ Tool for extract DATA archives from mobile game [Earth Revival (Project Arrival)
 > If the output directory is not specified, then the unpacked files will be in the same place as the IDX file
 
 # ER.LuaJIT.Decompiler :see_no_evil:
-Tool for decompile lua files (take it [here](https://github.com/marsinator358/luajit-decompiler-v2/issues/68#issuecomment-2990486852))
+Tool for decompile lua files (take it [here](https://github.com/marsinator358/luajit-decompiler-v2/issues/68#issuecomment-2990486852)).
+
+**Author** - [marsinator358](https://github.com/marsinator358)
 
 ## Usage
 > luajit-decompiler-v2 "**ANY.lua**"
 
-# Credits
+# ER.Metadata.Decryptor :see_no_evil:
+Tool for decrypt **global-metadata.dat**
 
-* [marsinator358](https://github.com/marsinator358)
+> [!note]
+> There is no encryption in the mobile version only for PC
 
-# Thanks
+# Special Thanks
 
 * [cdj88888](https://github.com/cdj88888)
